@@ -2,5 +2,7 @@
 BasedOnStyle: Microsoft
 SortIncludes: 'false'
 UseTab: Never
+AlignConsecutiveAssignments: Consecutive
+ColumnLimit: 80
 
 ...
