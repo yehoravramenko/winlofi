@@ -1,4 +1,5 @@
 #include <Windows.h>
+#include <windowsx.h>
 #include "res/resource.h"
 
 #define ID_QUIT            1
@@ -8,15 +9,37 @@
 NOTIFYICONDATA niData;
 HICON hAppIcon;
 
+void ShowTrayMenu(const HWND hWnd)
+{
+  POINT point;
+  HMENU hMenu;
+  HMENU hMenuTrackPopup;
+   
+  hMenu = LoadMenu(GetModuleHandle(NULL), "TrayMenu");
+  hMenuTrackPopup = GetSubMenu(hMenu, 0);
+  GetCursorPos((LPPOINT) &point);
+  TrackPopupMenu(hMenuTrackPopup, TPM_LEFTALIGN | TPM_LEFTBUTTON, point.x, point.y, 0, hWnd, NULL);
+
+  DestroyMenu(hMenu);
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   switch(uMsg)
   {
+  case WM_COMMAND:
+    if(wParam == ID_TRAY_EXIT)
+      DestroyWindow(hWnd);
+    break;
+    
   case TRAY_ICON_MESSAGE:
     switch(lParam)
     {
     case WM_LBUTTONDOWN:
       ShowWindow(hWnd, SW_RESTORE);
+      break;
+    case WM_RBUTTONDOWN:
+      ShowTrayMenu(hWnd);
       break;
     }
   break;
@@ -44,7 +67,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     break;
     
   case WM_CLOSE:
-    /* DestroyWindow(hWnd); */
     ShowWindow(hWnd, SW_HIDE);
     break;
 
@@ -82,7 +104,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 		 CW_USEDEFAULT, CW_USEDEFAULT, 400, 500,
 		 NULL, NULL, hInstance, NULL);
   
-  for(;;)
+  for(;msg.message != WM_QUIT;)
   {
     BOOL res = GetMessage(&msg, NULL, 0, 0);
     if(res == -1)
@@ -94,6 +116,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
- exit:  
   return msg.wParam;
 }

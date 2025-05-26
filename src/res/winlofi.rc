@@ -1,3 +1,12 @@
 #include "resource.h"
 
 IDI_RADIO ICON "radio.ico"
+
+TrayMenu MENU
+{
+	POPUP "Menu"
+	{
+		MENUITEM "Open settings", ID_TRAY_SETTINGS
+		MENUITEM "Exit", ID_TRAY_EXIT
+	}
+}
