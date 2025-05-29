@@ -28,9 +28,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
   switch(uMsg)
   {
   case WM_COMMAND:
-    if(wParam == ID_TRAY_EXIT)
+    switch(wParam)
+    {
+    case ID_TRAY_EXIT:
       DestroyWindow(hWnd);
-    break;
+      break;
+    case ID_TRAY_SETTINGS:
+      ShowWindow(hWnd, SW_RESTORE);
+      break;
+    }
+  break;
     
   case TRAY_ICON_MESSAGE:
     switch(lParam)
@@ -104,7 +111,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 		 CW_USEDEFAULT, CW_USEDEFAULT, 400, 500,
 		 NULL, NULL, hInstance, NULL);
   
-  for(;msg.message != WM_QUIT;)
+  //for(;msg.message != WM_QUIT;)
+  for(;;)
   {
     BOOL res = GetMessage(&msg, NULL, 0, 0);
     if(res == -1)
